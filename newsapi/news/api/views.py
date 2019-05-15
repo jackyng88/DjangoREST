@@ -78,13 +78,14 @@ class ArticleDetailAPIView(APIView):
     def get_object(self, pk):
         # Function that calls the DRF get_object_or_404 function
         article = get_object_or_404(Article, pk=pk)
-        return Article
+        return article
 
     def get(self, request, pk):
         # Get function that calls above get_object function
         article = self.get_object(pk)
         serializer = ArticleSerializer(article)
         return Response(serializer.data)
+
 
     def put(self, request, pk):
         # Put function 
