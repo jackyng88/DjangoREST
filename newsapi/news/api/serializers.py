@@ -4,13 +4,16 @@ from django.utils.timesince import timesince
 
 from rest_framework import serializers
 
-from news.models import Article
+from news.models import Article, Journalist
 
 
 class ArticleSerializer(serializers.ModelSerializer):
     # Class extending from the DRF ModelSerializer class
 
     time_since_publication = serializers.SerializerMethodField()
+    #author = serializers.StringRelatedField()
+    #author = JournalistSerializer(read_only=True)
+
 
     class Meta:
         '''
@@ -50,6 +53,27 @@ class ArticleSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Title must be at least 30 characters long!')
         return value
 
+
+class JournalistSerializer(serializers.ModelSerializer):
+    # Journalist Serializer using ModelSerializer
+    '''
+    HyperlinkedRelatedField pulls the related fields from view_name. In this
+    instance it looks into urls.py and gets the associated endpoint with the
+    same name as view_name. 
+
+    Also with the way HyperlinkedRelatedField works is that we have to specify
+    another parameter for that serializer class. In this case passing the
+    context of the request.
+
+    '''
+    articles = serializers.HyperlinkedRelatedField(many=True,
+                                                   read_only=True,
+                                                   view_name='article-detail')
+    #articles = ArticleSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Journalist
+        fields = '__all__'
 '''
 Below implemention using just the base Serializer class from the Django
 REST Frmamework
